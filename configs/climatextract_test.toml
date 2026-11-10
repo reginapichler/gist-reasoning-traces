@@ -1,0 +1,35 @@
+# Small, cheap test config: one report, pre-computed embeddings.
+# Used by sample_pipeline_run.py, which sets llm_model per run.
+
+[input]
+filename_list = ["data/pdfs/test_report/report.pdf"]
+
+[models]
+llm_model = "gpt-oss-120b"
+emb_model = "text-embedding-ada-002"
+max_parallel_llm_prompts_running = 1
+max_parallel_embedding_calls = 5
+temperature = 0.0
+return_logprobs = false
+reasoning_effort = "low"
+
+[extraction]
+year_min = 2013
+year_max = 2024
+input_mode = "text"
+embed_only = false
+prompt_type = "structured_json"
+context_window = 0
+similarity_top_k = 7
+embeddings_repository = "./data/processed/embeddings/test_embeddings/test_embeddings.duckdb"
+
+[output]
+output_dir = "output"
+
+[evaluation]
+gold_standard = "data/evaluation_dataset/test_evaluation/gold_standard.csv"
+
+# Experiment-only options (not pipeline parameters).
+[sample]
+model_ids = ["gpt-oss-120b", "DeepSeek-V4-Flash-0731"]
+max_output_tokens = 4096
