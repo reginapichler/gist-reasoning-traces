@@ -10,6 +10,7 @@ import sqlite3
 import sys
 import tempfile
 import time
+from collections import Counter
 
 from dotenv import load_dotenv
 
@@ -31,6 +32,8 @@ MODEL_CHOICES = (
     "DeepSeek-V4-Flash-0731",
 )
 REASONING_CHOICES = ("none", "low", "medium", "high")
+TRACE_BUFFER_TTL_SECONDS = 7 * 24 * 60 * 60
+TRACE_BUFFER_MAX_SIZE = 1000
 
 
 def _decode_json(value):
@@ -140,6 +143,17 @@ def load_run_traces(database_path: Path, run_id: str) -> list[dict]:
             f"No MLflow traces were recorded for run {run_id}."
         )
     return traces
+
+
+def configure_mlflow_trace_buffer(document_count: int) -> None:
+    """Keep long-running batch traces buffered until MLflow closes them."""
+    os.environ["MLFLOW_TRACE_TIMEOUT_SECONDS"] = "0"
+    os.environ["MLFLOW_TRACE_BUFFER_TTL_SECONDS"] = str(
+        TRACE_BUFFER_TTL_SECONDS
+    )
+    os.environ["MLFLOW_TRACE_BUFFER_MAX_SIZE"] = str(
+        max(TRACE_BUFFER_MAX_SIZE, document_count + 1)
+    )
 
 
 def estimate_llm_cost(
@@ -284,6 +298,45 @@ def _span_input_filename(span: dict) -> str | None:
         if isinstance(filename, str):
             return filename
     return None
+
+
+def validate_trace_coverage(traces: list[dict], pdf_paths: list[Path]) -> None:
+    """Fail explicitly unless every requested PDF has exactly one document span."""
+    expected = Counter(_normalized_path(path) for path in pdf_paths)
+    observed = Counter(
+        _normalized_path(filename)
+        for trace in traces
+        for span in trace["spans"]
+        if span.get("name") == "retrieve_values_per_doc"
+        and (filename := _span_input_filename(span))
+    )
+    missing = expected - observed
+    unexpected = observed - expected
+    if not missing and not unexpected:
+        return
+
+    details = []
+    if missing:
+        details.append(
+            "missing: "
+            + ", ".join(
+                f"{Path(path).name} ({count})"
+                for path, count in sorted(missing.items())
+            )
+        )
+    if unexpected:
+        details.append(
+            "unexpected: "
+            + ", ".join(
+                f"{Path(path).name} ({count})"
+                for path, count in sorted(unexpected.items())
+            )
+        )
+    raise RuntimeError(
+        "MLflow trace coverage does not match the requested PDFs; "
+        + "; ".join(details)
+        + ". No complete trace export was written."
+    )
 
 
 def _span_attributes(span: dict) -> dict:
@@ -650,6 +703,7 @@ def main() -> int:
     tracking_dir.mkdir(parents=True, exist_ok=True)
     os.environ["MLFLOW_TRACKING_URI"] = "sqlite:///mlruns/mlflow.db"
     os.environ["MLFLOW_ENABLE_ARTIFACTS_PROGRESS_BAR"] = "false"
+    configure_mlflow_trace_buffer(len(pdf_paths))
 
     os.chdir(PROJECT_ROOT)
     if str(PROJECT_ROOT) not in sys.path:
@@ -737,6 +791,10 @@ def main() -> int:
         # Construct gateway handlers only after explicit cost confirmation.
         llm = LiteLLMGatewayLlmHandler()
         embedder = LiteLLMGatewayEmbeddingHandler()
+        print(
+            "MLflow trace buffer TTL: "
+            f"{int(os.environ['MLFLOW_TRACE_BUFFER_TTL_SECONDS'])} seconds."
+        )
         print(f"Starting extraction of {len(pdf_paths)} PDF(s)...")
         started = time.perf_counter()
         result_path = extract(
@@ -759,6 +817,7 @@ def main() -> int:
         run_id = run_config["run_info"]["run_id"]
 
         traces = load_run_traces(database_path, run_id)
+        validate_trace_coverage(traces, pdf_paths)
         trace_directory = results_dir / "traces"
         trace_directory.mkdir(parents=True, exist_ok=True)
         for trace in traces:
@@ -796,6 +855,7 @@ def main() -> int:
             "wall_clock_seconds": round(elapsed_seconds, 3),
             "mlflow_tracking_uri": os.environ["MLFLOW_TRACKING_URI"],
             "mlflow_run_id": run_id,
+            "mlflow_trace_buffer_ttl_seconds": TRACE_BUFFER_TTL_SECONDS,
             "results_directory": str(results_dir.resolve()),
             "reported_costs": run_config["metrics"],
             "cost_estimate": estimate,
