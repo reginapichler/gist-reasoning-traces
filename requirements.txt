@@ -1,1 +1,11 @@
 climatextract==0.3.4
+
+# for the analysis notebooks
+ipykernel==7.4.0
+matplotlib==3.11.2
+scipy==1.18.1
+pyarrow==26.0.1
+scikit-learn==1.9.1
+bertopic==0.17.4
+sentence-transformers==6.3.0
+umap-learn==0.6.0
