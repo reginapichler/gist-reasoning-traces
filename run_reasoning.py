@@ -61,7 +61,7 @@ ALLOWED_REASONING = {
     "gpt-oss-120b": ("low", "medium", "high"),
     "DeepSeek-V4-Flash-0731": ("none", "high", "max"),
 }
-EXPLICIT_NONE_MODELS = ("DeepSeek-V4-Flash-0731",)
+EXPLICIT_NONE_MODELS = ("DeepSeek-V4-Flash-0731","gpt-6-luna")
 
 DEFAULT_PARALLEL_LLM_CALLS = 20
 EMBEDDING_PARALLEL_CALLS = 30
