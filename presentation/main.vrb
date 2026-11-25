@@ -1,0 +1,24 @@
+\frametitle{Example (sketch)}
+\small
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Page / excerpt}\\[0.3em]
+\texttt{\ldots Scope 1 emissions 2019:}\\
+\texttt{772,607 kgCO2e \ldots}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Trace (snippet)}\\[0.3em]
+\textit{``Need to extract Scope~1 \ldots}\\
+\textit{table shows 772607 \ldots}\\
+\textit{unit is kgCO2e \ldots''}
+\end{column}
+\end{columns}
+\vspace{0.8em}
+\textbf{Final answer (JSON)}\\[0.3em]
+{\ttfamily \{"KPI\_Entries": [\{"year": 2019, "kpi\_name": "1",}\\
+{\ttfamily "value": 772607, "unit": "kgCO2e"\}]\}}
+\vspace{0.6em}
+\begin{alertblock}{For discussion}
+What counts as ``good'' reasoning -- length, correct number,
+link to the page, revision, \ldots?
+\end{alertblock}
