@@ -400,6 +400,8 @@ How should we analyse the traces?
 \end{frame}
 
 \begin{frame}{1.\ Topic modelling}
+%als Idee einmal mit den Prompt wiederholungen und ohne analysieren
+% Anzahl der Topic könnte problematisch sein -> weiter untersuchen 
 \begin{itemize}
   \item Goal: discover structure in reasoning sentences without a fixed codebook first
   \item Unit of analysis: sentences (not whole traces)
@@ -547,7 +549,7 @@ Evaluation & How the model judges earlier steps \\
 \centering
 \renewcommand{\arraystretch}{1.25}
 \small
-\begin{tabular}{l rrr}
+\begin{tabular}{l rr!{\color{lmudark}\vrule width 1.2pt}r}
 \toprule
 \rowcolor{lmugreen}
 \hcell{Model} & \hcell{FP} & \hcell{FN} & \hcell{Total}\\
@@ -566,7 +568,7 @@ DeepSeek max   &  92 &  80 & 172\\
 \end{tabular}
 
 \vspace{0.6em}
-{\footnotesize FP: extracted value does not match gold. FN: gold value not extracted.}
+{\footnotesize FP: extracted value does not match gold. FN: no extracted value}
 
 \end{frame}
 
