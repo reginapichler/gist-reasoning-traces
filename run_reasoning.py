@@ -54,14 +54,14 @@ GOLD_STANDARD = (
 
 MODEL_CHOICES = ("gpt-6-luna", "gpt-oss-120b", "DeepSeek-V4-Flash-0731")
 REASONING_CHOICES = ("none", "low", "medium", "high", "max")
-# "none" is only sent to the API for models listed in EXPLICIT_NONE_MODELS;
-# for the others it means "omit the reasoning_effort parameter".
+# Same as climatextract.LLMParams: write the chosen effort into the config as-is
+# (default ``none``). Adapters only forward a truthy value; LiteLLM
+# ``drop_params`` drops it when the model does not support it.
 ALLOWED_REASONING = {
     "gpt-6-luna": ("none", "low", "medium", "high"),
-    "gpt-oss-120b": ("low", "medium", "high"),
+    "gpt-oss-120b": ("none", "low", "medium", "high"),
     "DeepSeek-V4-Flash-0731": ("none", "high", "max"),
 }
-EXPLICIT_NONE_MODELS = ("DeepSeek-V4-Flash-0731","gpt-6-luna")
 
 DEFAULT_PARALLEL_LLM_CALLS = 20
 EMBEDDING_PARALLEL_CALLS = 30
@@ -494,10 +494,6 @@ def build_config(
         Path to the temporary TOML file.
     """
     pdf_list = ", ".join(json.dumps(str(path)) for path in pdf_paths)
-    if reasoning_effort == "none" and model_name not in EXPLICIT_NONE_MODELS:
-        reasoning_value = ""
-    else:
-        reasoning_value = reasoning_effort
     run_label = f"{model_name}_{reasoning_effort}"
     content = f"""\
 [input]
@@ -510,7 +506,7 @@ max_parallel_llm_prompts_running = {parallel_llm_calls}
 max_parallel_embedding_calls = {EMBEDDING_PARALLEL_CALLS}
 temperature = 0.0
 return_logprobs = false
-reasoning_effort = {json.dumps(reasoning_value)}
+reasoning_effort = {json.dumps(reasoning_effort)}
 
 [extraction]
 year_min = 2013
@@ -576,11 +572,12 @@ def main() -> int:
     parser.add_argument(
         "--reasoning",
         choices=REASONING_CHOICES,
-        default="low",
+        default="none",
         help=(
-            "Reasoning effort (default: low). Allowed values depend on the "
-            "model: gpt-oss-120b low/medium/high, DeepSeek-V4-Flash-0731 "
-            "none/high/max, gpt-6-luna none/low/medium/high."
+            "Reasoning effort (default: none, same as climatextract). "
+            "Allowed values depend on the model: gpt-oss-120b "
+            "none/low/medium/high, DeepSeek-V4-Flash-0731 none/high/max, "
+            "gpt-6-luna none/low/medium/high."
         ),
     )
     parser.add_argument(
