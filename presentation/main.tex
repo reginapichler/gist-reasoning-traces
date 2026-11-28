@@ -230,7 +230,7 @@ GIST / Master's seminar}
 
 \begin{frame}{Background -- What are reasoning traces?}
 \begin{itemize}
-  \item Reasoning models generate reasoning traces on its way to the final answer (noch Quelle Lee & Hockenmaier)
+  \item Reasoning models generate reasoning traces on its way to the final answer (noch Quelle Lee \& Hockenmaier)
   \item every trace includes the final answer 
   
   
@@ -563,17 +563,18 @@ DeepSeek max   & 1{,}266 & 1{,}236 & 2.21 & 34.4 & 92.0 \\
 %========================================================================================
 \section{Analysis directions}
 
-\begin{frame}{What we want to discuss today}
-How should we analyse the traces?
-\vspace{0.5em}
-\begin{enumerate}
-  \item \textbf{Topic modelling} -- what topics appear in the text?
-  \item \textbf{Functions within the Trace} -- annotation scheme
-  \item \textbf{LLM-as-a-judge} -- assign parts of trace to topics/functions
-  \item \textbf{Error Analysis of Incorrect Traces}
-  \item\textbf{Further Literature}
-\end{enumerate}
-\end{frame}
+\newcommand{\analysisdivider}[2]{%
+  \begin{frame}[plain]
+    \centering
+    \vfill
+    {\color{lmugreen}\fontsize{20}{24}\selectfont\bfseries #1\par}
+    \vspace{0.6em}
+    {\color{lmudark}\fontsize{30}{36}\selectfont\bfseries #2\par}
+    \vfill
+  \end{frame}
+}
+
+\analysisdivider{A}{Topic modelling}
 
 \begin{frame}{BERTopic: Same traces, two clustering methods}
 \centering
@@ -650,19 +651,9 @@ How should we analyse the traces?
 \vspace{0.35em}
 \end{frame}
 
-\begin{frame}{2.\ LLM classification}
-\begin{itemize}
-  \item Idea: let an LLM assign each sentence / span / trace to a category
-  \item Useful once a category scheme exists
-  \item Can scale beyond manual coding
-\end{itemize}
-\vspace{0.5em}
-\begin{alertblock}{Open point}
-Classification is only as good as the category scheme and the prompt / validation setup.
-\end{alertblock}
-\end{frame}
+\analysisdivider{B}{From topics to functions:\\ReasoningFlow}
 
-\begin{frame}{3.\ Functions within the Trace - ReasoningFlow }
+\begin{frame}{Functions within the trace: ReasoningFlow}
 \begin{columns}[c]
 \begin{column}{0.42\textwidth}
 \begin{itemize}
@@ -769,7 +760,9 @@ Evaluation & How the model judges earlier steps \\
     
 \end{frame}
 
-\begin{frame}{3.\ LLM-as-a-Judge}
+\analysisdivider{C}{LLM-as-a-Judge}
+
+\begin{frame}{LLM-as-a-Judge}
 \begin{itemize}
   \item Idea: let an LLM assign each sentence / span / trace to a category
   \item Useful once a category scheme exists
@@ -781,7 +774,9 @@ Classification is only as good as the category scheme and the prompt / validatio
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{4.\ Error Analysis of Incorrect Traces}
+\analysisdivider{D}{Error analysis}
+
+\begin{frame}{Error analysis of incorrect traces}
 \centering
 \renewcommand{\arraystretch}{1.25}
 \small
@@ -808,7 +803,9 @@ DeepSeek max   &  92 &  80 & 172\\
 
 \end{frame}
 
-\begin{frame}{5. \ Further Literature}
+\analysisdivider{E}{Further methods presented in literature}
+
+\begin{frame}{Further methods presented in literature}
 \begin{itemize}
     \item \textbf{Factuality}
     \item \textbf{Validity}
