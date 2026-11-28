@@ -219,15 +219,21 @@ GIST / Master's seminar}
   \item \textbf{Variation:} reasoning effort (low / medium / high; high / max)
 \end{itemize}
 \vspace{0.6em}
-\begin{block}{Central question}
-What changes when reasoning effort changes -- in extraction quality,
-and in the \textbf{visible reasoning traces}?
+\begin{block}{Central questions}
+\begin{enumerate}
+    \item How does the performance of a reasoning model vary with its reasoning effort?
+    \item What do the visible reasoning traces contain, and how do they change with effort?
+\end{enumerate}
+
 \end{block}
 \end{frame}
 
 \begin{frame}{Background -- What are reasoning traces?}
 \begin{itemize}
-  \item Reasoning models can emit visible intermediate text before the answer
+  \item Reasoning models generate reasoning traces on its way to the final answer (noch Quelle Lee & Hockenmaier)
+  \item every trace includes the final answer 
+  
+  
   \item Higher effort allocates more reasoning budget -- not automatically better answers
   \item Visible traces are \textbf{generated text}, not a faithful record of internal computation
 \end{itemize}
@@ -624,27 +630,24 @@ How should we analyse the traces?
 \end{columns}
 \end{frame}
 
-\begin{frame}{Topic modelling: Takeaways for our reasoning traces}
+\begin{frame}{Topic modelling: takeaways}
 \begin{block}{What the clusters reveal}
-\small BERTopic identifies recurring reasoning moves at sentence level, not model-wide reasoning types:
-scope and emissions totals, years and units, value extraction, missing or garbled excerpts,
-and repeated output instructions.
-This makes it useful for discovering candidate categories and difficult cases.
+\small 
+\begin{itemize}
+    \item  Recurring reasoning moves at sentence level $\rightarrow$ structures exist within each trace
+    \item Differences \textbf{and} similarities between the models and their reasoning levels
+    \item Hard to choose a single parameter setting and methodology
+\end{itemize}
 \end{block}
 \vspace{0.35em}
-\begin{block}{Where the approach breaks down}
-\small HDBSCAN finds 38 topics, but 17.6\% of unique sentences remain unassigned
-(16.0\% of occurrences). The 10-topic K-means fit is coarser and mixes several moves;
-agreement with HDBSCAN is moderate (ARI 0.513). Topics can also be inflated by prompt
-copies and depend on embedding, UMAP, and clustering settings.
+\begin{block}{Implications for the next steps}
+\small
+\begin{itemize}
+\item Reasoning texts are quite similar $\rightarrow$ hard to separate into distinct categories
+\item Manual verification and interpretation is important $\rightarrow$ \textbf{but} very difficult to judge
+\end{itemize}
 \end{block}
 \vspace{0.35em}
-\begin{block}{Implications for my analysis}
-\small The 10-topic fit provides a useful overview for comparing reasoning settings.
-The finer HDBSCAN fit reveals JSON instructions and empty-KPI cases that remain separate
-in BERTopic. However, the clusters are exploratory rather than final annotation categories:
-topic labels, boundaries, and stability still require manual interpretation.
-\end{block}
 \end{frame}
 
 \begin{frame}{2.\ LLM classification}
