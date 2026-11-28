@@ -215,8 +215,8 @@ GIST / Master's seminar}
 \begin{itemize}
   \item \textbf{Task:} extract GHG / KPI values from sustainability reports
   \item \textbf{Pipeline:} ClimateXtract (retrieval $\rightarrow$ LLM $\rightarrow$ evaluation)
-  \item \textbf{Models:} gpt-oss-120b, DeepSeek-V4-Flash
-  \item \textbf{Variation:} reasoning effort (low / medium / high; high / max)
+  \item \textbf{Models:} gpt-oss-120b, DeepSeek-V4-Flash, gpt-6-luna
+  \item \textbf{Variation:} reasoning effort (GPT-OSS: low / medium / high; DeepSeek: none / high / max; GPT-6 Luna: none)
 \end{itemize}
 \vspace{0.6em}
 \begin{block}{Central questions}
@@ -232,10 +232,6 @@ GIST / Master's seminar}
 \begin{itemize}
   \item Reasoning models generate reasoning traces on its way to the final answer (noch Quelle Lee \& Hockenmaier)
   \item every trace includes the final answer 
-  
-  
-  \item Higher effort allocates more reasoning budget -- not automatically better answers
-  \item Visible traces are \textbf{generated text}, not a faithful record of internal computation
 \end{itemize}
 \end{frame}
 
@@ -275,7 +271,6 @@ Thus output empty \texttt{KPI\_Entries} array.
 \begin{center}
 $\rightarrow$ Same input, same answer -- medium checks more rules before concluding.
 \end{center}
-{\scriptsize Shortened}
 \end{frame}
 %========================================================================================
 \section{Setup}
