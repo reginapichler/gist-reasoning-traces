@@ -225,7 +225,7 @@ and in the \textbf{visible reasoning traces}?
 \end{block}
 \end{frame}
 
-\begin{frame}{Background (brief)}
+\begin{frame}{Background -- What are reasoning traces?}
 \begin{itemize}
   \item Reasoning models can emit visible intermediate text before the answer
   \item Higher effort allocates more reasoning budget -- not automatically better answers
@@ -233,6 +233,44 @@ and in the \textbf{visible reasoning traces}?
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Background -- Example traces}
+\begin{columns}[T]
+
+\begin{column}{0.36\textwidth}
+\begin{block}{GPT-OSS low (46 words)}
+\scriptsize\itshape
+We need extract total emissions. Text says ``direct and indirect CO$_2$
+emissions in fiscal 2021 were 1,053,000 tons.'' That's total Scope1+2? It's
+direct and indirect = Scope1+2 combined, not separate. We need separate
+values; not given. So none? No other absolute values. So output empty list.
+\end{block}
+\end{column}
+
+\begin{column}{0.60\textwidth}
+\begin{block}{GPT-OSS medium (193 words, shortened)}
+\scriptsize\itshape
+We need to extract absolute values for Scope 1, Scope 2 (market-based or
+location-based), Scope 3 from the excerpt. Only values for whole company,
+absolute numbers, not percentages. [\dots]
+We have excerpt: ``The Fujifilm Group's direct and indirect CO$_2$ emissions in
+fiscal 2021 were 1,053,000 tons.'' This seems to be total of direct (Scope 1) +
+indirect (Scope 2?) [\dots] But we need separate values for each scope. [\dots]
+Also later: ``our direct CO$_2$ emissions in fiscal 2021 were reduced by 3\% over
+the fiscal 2019 level''. That's a relative change, not absolute. [\dots]
+The instruction: ``Only extract value referring to Scope 1, Scope 2 or Scope 3
+separately.'' [\dots] So we cannot extract combined total. [\dots]
+Thus output empty \texttt{KPI\_Entries} array.
+\end{block}
+\end{column}
+
+\end{columns}
+
+\vspace{0.6em}
+\begin{center}
+$\rightarrow$ Same input, same answer -- medium checks more rules before concluding.
+\end{center}
+{\scriptsize Shortened}
+\end{frame}
 %========================================================================================
 \section{Setup}
 
@@ -374,9 +412,6 @@ DeepSeek max   & 1{,}266 & 1{,}236 & 2.21 & 34.4 & 92.0 \\
 \includegraphics[height=0.75\textheight, keepaspectratio]{presentation/figures/reasoning_tokens_boxplot.pdf}
 \end{frame}
 
-\begin{frame}{Used Phrases}
-    
-\end{frame}
 
 \begin{frame}{Take-aways: First Insights}
     \begin{itemize}
@@ -393,15 +428,14 @@ How should we analyse the traces?
 \vspace{0.5em}
 \begin{enumerate}
   \item \textbf{Topic modelling} -- what themes appear in the text?
-  \item \textbf{LLM classification} -- assign traces / sentences to categories
   \item \textbf{Functions within the Trace} -- annotation scheme
+  \item \textbf{LLM-as-a-judge} -- assign parts of trace to themes/functions
   \item \textbf{Error Analysis of Incorrect Traces}
+  \item\textbf{Further Literature}
 \end{enumerate}
 \end{frame}
 
 \begin{frame}{1.\ Topic modelling}
-%als Idee einmal mit den Prompt wiederholungen und ohne analysieren
-% Anzahl der Topic könnte problematisch sein -> weiter untersuchen 
 \begin{itemize}
   \item Goal: discover structure in reasoning sentences without a fixed codebook first
   \item Unit of analysis: sentences (not whole traces)
@@ -425,19 +459,7 @@ Unsupervised clusters still need human labels -- and may not match evaluation cr
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{2.\ LLM classification}
-\begin{itemize}
-  \item Idea: let an LLM assign each sentence / span / trace to a category
-  \item Useful once a category scheme exists
-  \item Can scale beyond manual coding
-\end{itemize}
-\vspace{0.5em}
-\begin{alertblock}{Open point}
-Classification is only as good as the category scheme and the prompt / validation setup.
-\end{alertblock}
-\end{frame}
-
-\begin{frame}{3.\ Functions within the Trace - ReasoningFlow }
+\begin{frame}{2.\ Functions within the Trace - ReasoningFlow }
 \begin{columns}[c]
 \begin{column}{0.42\textwidth}
 \begin{itemize}
@@ -544,6 +566,17 @@ Evaluation & How the model judges earlier steps \\
     
 \end{frame}
 
+\begin{frame}{3.\ LLM-as-a-Judge}
+\begin{itemize}
+  \item Idea: let an LLM assign each sentence / span / trace to a category
+  \item Useful once a category scheme exists
+  \item Can scale beyond manual coding
+\end{itemize}
+\vspace{0.5em}
+\begin{alertblock}{Open point}
+Classification is only as good as the category scheme and the prompt / validation setup.
+\end{alertblock}
+\end{frame}
 
 \begin{frame}{4.\ Error Analysis of Incorrect Traces}
 \centering
@@ -570,6 +603,16 @@ DeepSeek max   &  92 &  80 & 172\\
 \vspace{0.6em}
 {\footnotesize FP: extracted value does not match gold. FN: no extracted value}
 
+\end{frame}
+
+\begin{frame}{5. \ Further Literature}
+\begin{itemize}
+    \item \textbf{Factuality}
+    \item \textbf{Validity}
+    \item \textbf{Utility}
+    \item \textbf{Coherence}
+\end{itemize}
+    
 \end{frame}
 
 \begin{frame}{Discussion prompts}
