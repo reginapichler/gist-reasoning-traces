@@ -215,8 +215,8 @@ GIST / Master's seminar}
 \begin{itemize}
   \item \textbf{Task:} extract GHG / KPI values from sustainability reports
   \item \textbf{Pipeline:} ClimateXtract (retrieval $\rightarrow$ LLM $\rightarrow$ evaluation)
-  \item \textbf{Models:} gpt-oss-120b, DeepSeek-V4-Flash
-  \item \textbf{Variation:} reasoning effort (low / medium / high; high / max)
+  \item \textbf{Models:} gpt-oss-120b, DeepSeek-V4-Flash, gpt-6-luna  (Schreibweise noch mal prüfen)
+  \item \textbf{Variation:} reasoning effort (low / medium / high; none / high / max; none)
 \end{itemize}
 \vspace{0.6em}
 \begin{block}{Central questions}
@@ -230,12 +230,8 @@ GIST / Master's seminar}
 
 \begin{frame}{Background -- What are reasoning traces?}
 \begin{itemize}
-  \item Reasoning models generate reasoning traces on its way to the final answer (noch Quelle Lee & Hockenmaier)
+  \item Reasoning models generate reasoning traces on its way to the final answer (noch Quelle Lee %&% Hockenmaier)
   \item every trace includes the final answer 
-  
-  
-  \item Higher effort allocates more reasoning budget -- not automatically better answers
-  \item Visible traces are \textbf{generated text}, not a faithful record of internal computation
 \end{itemize}
 \end{frame}
 
@@ -248,7 +244,8 @@ GIST / Master's seminar}
 We need extract total emissions. Text says ``direct and indirect CO$_2$
 emissions in fiscal 2021 were 1,053,000 tons.'' That's total Scope1+2? It's
 direct and indirect = Scope1+2 combined, not separate. We need separate
-values; not given. So none? No other absolute values. So output empty list.
+values; not given. So none? No other absolute values. So output emp
+ty list.
 \end{block}
 \end{column}
 
@@ -275,7 +272,6 @@ Thus output empty \texttt{KPI\_Entries} array.
 \begin{center}
 $\rightarrow$ Same input, same answer -- medium checks more rules before concluding.
 \end{center}
-{\scriptsize Shortened}
 \end{frame}
 %========================================================================================
 \section{Setup}
@@ -650,19 +646,9 @@ How should we analyse the traces?
 \vspace{0.35em}
 \end{frame}
 
-\begin{frame}{2.\ LLM classification}
-\begin{itemize}
-  \item Idea: let an LLM assign each sentence / span / trace to a category
-  \item Useful once a category scheme exists
-  \item Can scale beyond manual coding
-\end{itemize}
-\vspace{0.5em}
-\begin{alertblock}{Open point}
-Classification is only as good as the category scheme and the prompt / validation setup.
-\end{alertblock}
-\end{frame}
 
-\begin{frame}{3.\ Functions within the Trace - ReasoningFlow }
+
+\begin{frame}{2.\ Functions within the Trace -- ReasoningFlow }
 \begin{columns}[c]
 \begin{column}{0.42\textwidth}
 \begin{itemize}
@@ -770,6 +756,17 @@ Evaluation & How the model judges earlier steps \\
 \end{frame}
 
 \begin{frame}{3.\ LLM-as-a-Judge}
+\begin{itemize}
+  \item Idea: let an LLM assign each sentence / span / trace to a category
+  \item Useful once a category scheme exists
+  \item Can scale beyond manual coding
+\end{itemize}
+\vspace{0.5em}
+\begin{alertblock}{Open point}
+Classification is only as good as the category scheme and the prompt / validation setup.
+\end{alertblock}
+\end{frame}
+\begin{frame}{2.\ LLM classification}
 \begin{itemize}
   \item Idea: let an LLM assign each sentence / span / trace to a category
   \item Useful once a category scheme exists
